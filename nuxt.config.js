@@ -25,6 +25,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/vue-swal'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -40,7 +41,26 @@ export default {
   modules: [
   ],
 
+  strapi: [
+    {url: process.env.STRAPI_URL || 'http://localhost:1337/api'},
+    {entities: ['products', 'orders', 'subscribers']},
+  ],
+  env: [
+    {STRAPI_URL: `http://localhost:1337/api`}
+  ],
+
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    extend(config, ctx) {
+      if (ctx.dev && ctx.isClient) {
+        config.module.rules.push({
+          enforce: 'pre',
+          test: /\.(js|vue)$/,
+          loader: 'eslint-loader',
+          exclude: /(node_modules)/,
+        })
+      }
+    },
+    vendor: ['swal'],
   }
 }
